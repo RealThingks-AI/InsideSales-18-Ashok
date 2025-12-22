@@ -452,15 +452,21 @@ export const MeetingModal = ({
         // Default: next available 30-min slot in user's timezone
         const browserTz = getBrowserTimezone();
         const nowInTz = toZonedTime(new Date(), browserTz);
+        const currentHour = nowInTz.getHours();
         const currentMinutes = nowInTz.getMinutes();
-        // Round up to next 30-minute slot
-        const nextSlotMinutes = currentMinutes < 30 ? 30 : 60;
+        
+        // Calculate next 30-minute slot (either :00 or :30)
         const defaultStart = new Date(nowInTz);
-        if (nextSlotMinutes === 60) {
-          defaultStart.setHours(defaultStart.getHours() + 1, 0, 0, 0);
+        defaultStart.setSeconds(0, 0);
+        
+        if (currentMinutes < 30) {
+          // Next slot is :30 of current hour
+          defaultStart.setMinutes(30);
         } else {
-          defaultStart.setMinutes(30, 0, 0);
+          // Next slot is :00 of next hour
+          defaultStart.setHours(currentHour + 1, 0);
         }
+        
         setStartDate(defaultStart);
         setStartTime(format(defaultStart, "HH:mm"));
         setDuration("30");

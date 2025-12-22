@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Video, Loader2, CalendarIcon, Clock, XCircle, X, Plus, User } from "lucide-react";
+import { Video, Loader2, CalendarIcon, XCircle, X, Plus, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { MeetingOutcomeSelect } from "@/components/meetings/MeetingOutcomeSelect";
@@ -785,7 +785,10 @@ export const MeetingModal = ({
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 z-50" align="start">
-                  <Calendar mode="single" selected={startDate} onSelect={(date) => { setStartDate(date); setDatePopoverOpen(false); }} disabled={date => date < todayInTimezone} initialFocus className="pointer-events-auto" />
+                  <Calendar mode="single" selected={startDate} onSelect={date => {
+                  setStartDate(date);
+                  setDatePopoverOpen(false);
+                }} disabled={date => date < todayInTimezone} initialFocus className="pointer-events-auto" />
                 </PopoverContent>
               </Popover>
             </div>
@@ -795,12 +798,15 @@ export const MeetingModal = ({
               <Popover open={timePopoverOpen} onOpenChange={setTimePopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="w-full h-8 justify-start text-left font-normal text-xs">
-                    <Clock className="mr-1.5 h-3.5 w-3.5" />
+                    
                     {formatDisplayTime(startTime)}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-28 p-1 z-50 max-h-48 overflow-y-auto" align="start">
-                  {availableStartTimeSlots.length > 0 ? availableStartTimeSlots.map(slot => <Button key={slot} variant={startTime === slot ? "secondary" : "ghost"} className="w-full justify-start text-xs h-7" onClick={() => { setStartTime(slot); setTimePopoverOpen(false); }}>
+                  {availableStartTimeSlots.length > 0 ? availableStartTimeSlots.map(slot => <Button key={slot} variant={startTime === slot ? "secondary" : "ghost"} className="w-full justify-start text-xs h-7" onClick={() => {
+                  setStartTime(slot);
+                  setTimePopoverOpen(false);
+                }}>
                         {formatDisplayTime(slot)}
                       </Button>) : <p className="text-xs text-muted-foreground p-2">No times available</p>}
                 </PopoverContent>

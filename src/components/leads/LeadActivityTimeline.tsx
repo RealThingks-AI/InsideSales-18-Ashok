@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Phone, 
   Mail, 
@@ -10,9 +11,11 @@ import {
   CheckSquare,
   Briefcase,
   Clock,
-  Loader2
+  Loader2,
+  History
 } from "lucide-react";
 import { format } from "date-fns";
+import { RecordChangeHistory } from "@/components/shared/RecordChangeHistory";
 
 interface TimelineItem {
   id: string;
@@ -53,6 +56,7 @@ const getActivityColor = (type: string) => {
 export const LeadActivityTimeline = ({ leadId }: LeadActivityTimelineProps) => {
   const [timeline, setTimeline] = useState<TimelineItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('activities');
 
   useEffect(() => {
     fetchTimeline();
@@ -131,67 +135,92 @@ export const LeadActivityTimeline = ({ leadId }: LeadActivityTimelineProps) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
+  const renderActivities = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
 
-  if (timeline.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
-        <p>No activity yet</p>
-      </div>
-    );
-  }
+    if (timeline.length === 0) {
+      return (
+        <div className="text-center py-8 text-muted-foreground">
+          <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
+          <p>No activity yet</p>
+        </div>
+      );
+    }
 
-  return (
-    <ScrollArea className="h-[400px]">
-      <div className="relative pl-6">
-        {/* Timeline line */}
-        <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-border" />
-        
-        <div className="space-y-4">
-          {timeline.map((item) => (
-            <div key={item.id} className="relative">
-              {/* Timeline dot */}
-              <div className={`absolute -left-4 mt-1.5 w-4 h-4 rounded-full flex items-center justify-center ${
-                item.type === 'meeting'
-                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
-                  : getActivityColor(item.metadata?.type || '')
-              }`}>
-                {item.icon}
-              </div>
-              
-              <div className="ml-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{item.title}</p>
-                    {item.description && (
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className="text-xs text-muted-foreground">
-                      {format(new Date(item.date), 'dd/MM/yyyy')}
-                    </span>
-                    {item.metadata?.type && (
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {item.metadata.type}
-                      </Badge>
-                    )}
+    return (
+      <ScrollArea className="h-[350px]">
+        <div className="relative pl-6">
+          {/* Timeline line */}
+          <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-border" />
+          
+          <div className="space-y-4">
+            {timeline.map((item) => (
+              <div key={item.id} className="relative">
+                {/* Timeline dot */}
+                <div className={`absolute -left-4 mt-1.5 w-4 h-4 rounded-full flex items-center justify-center ${
+                  item.type === 'meeting'
+                    ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+                    : getActivityColor(item.metadata?.type || '')
+                }`}>
+                  {item.icon}
+                </div>
+                
+                <div className="ml-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{item.title}</p>
+                      {item.description && (
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(item.date), 'dd/MM/yyyy')}
+                      </span>
+                      {item.metadata?.type && (
+                        <Badge variant="outline" className="text-xs capitalize">
+                          {item.metadata.type}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </ScrollArea>
+      </ScrollArea>
+    );
+  };
+
+  return (
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="activities" className="gap-2">
+          <Clock className="h-4 w-4" />
+          Activities
+        </TabsTrigger>
+        <TabsTrigger value="history" className="gap-2">
+          <History className="h-4 w-4" />
+          Change History
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="activities">
+        {renderActivities()}
+      </TabsContent>
+
+      <TabsContent value="history">
+        <RecordChangeHistory entityType="leads" entityId={leadId} maxHeight="350px" />
+      </TabsContent>
+    </Tabs>
   );
 };

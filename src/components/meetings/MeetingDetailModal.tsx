@@ -31,6 +31,7 @@ import { format } from "date-fns";
 import { useUserDisplayNames } from "@/hooks/useUserDisplayNames";
 import { getMeetingStatus } from "@/utils/meetingStatus";
 import { MeetingFollowUpsSection } from "./MeetingFollowUpsSection";
+import { RecordChangeHistory } from "@/components/shared/RecordChangeHistory";
 import { TaskModal } from "@/components/tasks/TaskModal";
 
 interface Meeting {
@@ -369,14 +370,10 @@ export const MeetingDetailModal = ({
           <TabsContent value="activity" className="mt-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Activity Timeline</CardTitle>
+                <CardTitle className="text-base">Change History</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Activity tracking coming soon</p>
-                  <p className="text-xs mt-1">Meeting history and changes will be displayed here</p>
-                </div>
+                <RecordChangeHistory entityType="meetings" entityId={meeting.id} maxHeight="300px" />
               </CardContent>
             </Card>
           </TabsContent>

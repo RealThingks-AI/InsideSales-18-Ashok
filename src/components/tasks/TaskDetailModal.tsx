@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUserDisplayNames } from '@/hooks/useUserDisplayNames';
+import { RecordChangeHistory } from '@/components/shared/RecordChangeHistory';
 import {
   CheckSquare,
   User,
@@ -326,14 +327,10 @@ export const TaskDetailModal = ({
           <TabsContent value="activity" className="mt-4">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Activity Timeline</CardTitle>
+                <CardTitle className="text-base">Change History</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>Activity tracking coming soon</p>
-                  <p className="text-xs mt-1">Task history and changes will be displayed here</p>
-                </div>
+                <RecordChangeHistory entityType="tasks" entityId={task.id} maxHeight="300px" />
               </CardContent>
             </Card>
           </TabsContent>
